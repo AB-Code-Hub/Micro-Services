@@ -1,0 +1,16 @@
+{
+  "name": "gateway-for-microservices",
+  "version": "1.0.0",
+  "description": "this gateway is use for microservices to perform various tasks",
+  "license": "ISC",
+  "author": "Bilal Chaudhary",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "dev" : "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-http-proxy": "^2.1.1"
+  }
+}

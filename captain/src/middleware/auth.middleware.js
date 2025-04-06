@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
-import { User as userModel } from "../models/user.model.js";
+import { Captain as captainModel } from "../models/captain.model.js";
 import { jWT_SECRET } from "../config/env.js";
+import { BlackListToken as blackListTokenModel } from "../models/blackListToken.model.js";
 
 export const authMiddleware = async (req, res, next) => {
   try {
@@ -9,13 +10,19 @@ export const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    const isTokenblackList = await blackListTokenModel.findOne({token})
+
+    if(isTokenblackList) {
+      return res.status(401).json({message: "Invalid token or token expired"})
+    }
+
     const decoded = jwt.verify(token, jWT_SECRET);
-    const user = await userModel.findById(decoded.id);
-    if (!user) {
+    const captain = await captainModel.findById(decoded.id);
+    if (!captain) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    req.user = user;
+    req.captain = captain;
     next();
   } catch (error) {
     return res

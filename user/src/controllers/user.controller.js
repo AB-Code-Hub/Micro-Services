@@ -11,13 +11,13 @@ export const register = async (req, res) => {
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
+    const { name, email, password } = req.body;
 
     const userExists = await userModel.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const { name, email, password } = req.body;
 
     const hashPassword = await bcrypt.hash(password, 10);
 
@@ -33,14 +33,15 @@ export const register = async (req, res) => {
       expiresIn: "1h",
     });
 
+    const filtredUser = await userModel.findById(newUser._id).select("-password")
+
 
     res.cookie("token", token)
 
     return res.status(201).json({
       message: "User registered successfully",
-      user: {
-       newUser
-      },
+      token: token,
+      user: filtredUser
     });
 
 
@@ -75,11 +76,16 @@ export const login = async (req, res) => {
             expiresIn: "1h",
         });
 
+        const filtredUser = await userModel.findById(user._id).select("-password")
+
         res.cookie("token", token);
+
+
 
         return res.status(200).json({
             message: "User logged in successfully",
-            data: user
+            token: token,
+            data: filtredUser
         });
     } catch (error) {
         console.error("Error during login:", error);
@@ -93,9 +99,13 @@ export const logout = async (req, res) => {
 
         const token = req.cookies.token
 
+        if(!token){
+          return res.status(400).json({message: "Invalid Token or Token Expired"})
+        }
+
         await blackListTokenModel.create({token})
         res.clearCookie('token')
-        res.status({message: "User logout successfully"},)
+        res.status(200).json({message: "User logout successfully"})
         
     } catch (error) {
         res.status(500).json({message: "Internal server error", error: error.message})
