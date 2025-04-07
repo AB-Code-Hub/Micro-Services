@@ -37,3 +37,37 @@ export const authRide = async (req, res, next) => {
         return res.status(500).json({message: "Internal server error", error: error.message})
     }
 }
+
+export const capAuth  = async (req, res, next) => {
+    try {
+        const token = req.cookies.token || req.headers.authorization.split(' ')[1]
+
+        if(!token) {
+            return res.status(401).json({message: "Invalid token or token expired"})
+        }
+
+        const decodedUser = jwt.verify(token, jWT_SECRET)
+
+       const response = await axios.get(`${BASE_URL}/captain/profile`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+       })
+
+       console.log(response.data)
+
+       const captain = response.data;
+
+       if(!captain) {
+        return res.status(401).json({message: "Unauthorized"})
+       }
+
+       req.captain = captain;
+
+        next()
+
+    } catch (error) {
+        console.error("Error in capAuth middleware", error)
+        return res.status(500).json({message: "Internal server error", error: error.message})
+    }
+}

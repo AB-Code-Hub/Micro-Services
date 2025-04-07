@@ -29,7 +29,7 @@ export const publishToQueue = async (queueName, data) => {
 
 export const subscribeToQueue = async (queueName, callback) => {
     try {
-        if (!channel) {
+        if (!channel) { 
             await connectQueue();
         }
         await channel.assertQueue(queueName);
