@@ -47,7 +47,7 @@ The application consists of four main microservices:
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/AB-Code-Hub/Micro-Services.git
 cd Micro-Services
 ```
 
@@ -129,19 +129,6 @@ statistics
 
 #### Ride Management
 - `POST /api/rides/create` - Create new ride
-  ```json
-  {
-    "pickupLocation": {
-      "type": "Point",
-      "coordinates": [longitude, latitude]
-    },
-    "dropLocation": {
-      "type": "Point",
-      "coordinates": [longitude, latitude]
-    },
-    "userId": "string"
-  }
-  ```
 - `PUT /api/rides/accept` - Accept ride request
 - `POST /api/rides/cancel` - Cancel ride
 - `PATCH /api/rides/complete` - Complete ride
